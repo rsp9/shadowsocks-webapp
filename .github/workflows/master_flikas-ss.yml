@@ -18,17 +18,17 @@ jobs:
     - uses: azure/docker-login@v1
       with:
         login-server: https://index.docker.io/v1/
-        username: ${{ secrets.AzureAppService_ContainerUsername_0e0aa0451435402495ee719b282209aa }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_8aa947669da5477fa92bb6b1504982d7 }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_451a608d2f82459b9e72fa6f12d494b2 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_bb85741b09b7404dac18bea16bf12245 }}
 
     - run: |
-        docker build . -t index.docker.io/${{ secrets.AzureAppService_ContainerUsername_0e0aa0451435402495ee719b282209aa }}/shadowsocks-webapp:${{ github.sha }}
-        docker push index.docker.io/${{ secrets.AzureAppService_ContainerUsername_0e0aa0451435402495ee719b282209aa }}/shadowsocks-webapp:${{ github.sha }}
+        docker build . -t index.docker.io/${{ secrets.AzureAppService_ContainerUsername_451a608d2f82459b9e72fa6f12d494b2 }}/shadowsocks-webapp:${{ github.sha }}
+        docker push index.docker.io/${{ secrets.AzureAppService_ContainerUsername_451a608d2f82459b9e72fa6f12d494b2 }}/shadowsocks-webapp:${{ github.sha }}
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'flikas-ss'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_1ad2922ee9b14e429438d8fc4da56573 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_0e0aa0451435402495ee719b282209aa }}/shadowsocks-webapp:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_c210d9617c2b40ea92bdc1f3d5c54327 }}
+        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_451a608d2f82459b9e72fa6f12d494b2 }}/shadowsocks-webapp:${{ github.sha }}'
