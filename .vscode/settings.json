@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/295cacf7-3591-4476-8c43-ceb9a60952ed/resourceGroups/ss/providers/Microsoft.Web/sites/flikas-ss",
+    "appService.deploySubpath": "."
+}
