@@ -14,6 +14,38 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "heroku build",
+            "type": "shell",
+            "command": "heroku",
+            "args": [
+                "container:push",
+                "web",
+                "--arg",
+                "GOPROXY=https://mirrors.aliyun.com/goproxy/",
+                "-a",
+                "flikas-ss-us"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "heroku",
+            "type": "shell",
+            "command": "heroku",
+            "args": [
+                "container:release",
+                "web",
+                "-a",
+                "flikas-ss-us"
+            ],
+            "dependsOn": [
+                "heroku build"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$go"
+            ]
         }
     ]
 }

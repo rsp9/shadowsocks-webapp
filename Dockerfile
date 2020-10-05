@@ -16,4 +16,4 @@ EXPOSE ${SERVER_PORT}
 
 # command
 USER root
-CMD ["/bin/sh", "-c", "exec ss-server -s $SERVER_ADDR -p $SERVER_PORT -k ${PASSWORD:-$(hostname)} -m $METHOD -t $TIMEOUT -d $DNS_ADDRS -u $ARGS --plugin v2ray-plugin --plugin-opts \"server\""]
+CMD ["/bin/sh", "-c", "exec ss-server -s $SERVER_ADDR -p $SERVER_PORT -k ${PASSWORD:-$(hostname)} -m $METHOD -t $TIMEOUT -d $DNS_ADDRS $ARGS --plugin v2ray-plugin --plugin-opts \"server\""]
