@@ -13,8 +13,9 @@ LABEL maintainer="flikas<contact@flikas.name>"
 COPY --from=builder /go/bin/* /usr/bin/
 ENV SERVER_PORT=80
 ENV PORT=
+ENV V2RAY_ARGS=
 EXPOSE ${SERVER_PORT}
 
 # command
 USER root
-CMD ["/bin/sh", "-c", "exec ss-server -s $SERVER_ADDR -p ${PORT:-SERVER_PORT} -k ${PASSWORD:-$(hostname)} -m $METHOD -t $TIMEOUT -d $DNS_ADDRS $ARGS --plugin v2ray-plugin --plugin-opts \"server\""]
+CMD ["/bin/sh", "-c", "exec ss-server -s $SERVER_ADDR -p ${PORT:-SERVER_PORT} -k ${PASSWORD:-$(hostname)} -m $METHOD -t $TIMEOUT -d $DNS_ADDRS $ARGS --plugin v2ray-plugin --plugin-opts \"server;${V2RAY_ARGS}\""]
