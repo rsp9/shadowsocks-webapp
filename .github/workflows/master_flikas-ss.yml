@@ -24,11 +24,3 @@ jobs:
     - run: |
         docker build . -t index.docker.io/${{ secrets.AzureAppService_ContainerUsername_54030022169340f49bb1dabb970b1a4e }}/shadowsocks-webapp:latest
         docker push index.docker.io/${{ secrets.AzureAppService_ContainerUsername_54030022169340f49bb1dabb970b1a4e }}/shadowsocks-webapp:latest
-
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'flikas-ss'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_8d4b6b2570bc47a5b00a5702dec6c4aa }}
-        images: '${{ secrets.AzureAppService_ContainerUsername_54030022169340f49bb1dabb970b1a4e }}/shadowsocks-webapp:latest'
