@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "docker build -t flikas/shadowsocks-webapp:1.0 -t flikas/shadowsocks-webapp:latest .",
+            "command": "docker build --build-arg GOPROXY=https://mirrors.aliyun.com/goproxy/ -t flikas/shadowsocks-webapp:1.0 -t flikas/shadowsocks-webapp:latest .",
             "problemMatcher": [
                 "$go"
             ],
