@@ -30,6 +30,7 @@ import (
 	"v2ray.com/core/proxy/freedom"
 
 	"v2ray.com/core/transport/internet"
+	"v2ray.com/core/transport/internet/http"
 	"v2ray.com/core/transport/internet/quic"
 	"v2ray.com/core/transport/internet/tls"
 	"v2ray.com/core/transport/internet/websocket"
@@ -57,7 +58,7 @@ var (
 	cert       = flag.String("cert", "", "Path to TLS certificate file. Overrides certRaw. Default: ~/.acme.sh/{host}/fullchain.cer")
 	certRaw    = flag.String("certRaw", "", "Raw TLS certificate content. Intended only for Android.")
 	key        = flag.String("key", "", "(server) Path to TLS key file. Default: ~/.acme.sh/{host}/{host}.key")
-	mode       = flag.String("mode", "websocket", "Transport mode: websocket, quic (enforced tls).")
+	mode       = flag.String("mode", "websocket", "Transport mode: websocket, http, quic (enforced tls).")
 	mux        = flag.Int("mux", 1, "Concurrent multiplexed connections (websocket client mode only).")
 	server     = flag.Bool("server", false, "Run in server mode")
 	logLevel   = flag.String("loglevel", "", "loglevel for v2ray: debug, info, warning (default), error, none.")
@@ -138,6 +139,14 @@ func generateConfig() (*core.Config, error) {
 			Header: []*websocket.Header{
 				{Key: "Host", Value: *host},
 			},
+		}
+		if *mux != 0 {
+			connectionReuse = true
+		}
+	case "http":
+		transportSettings = &http.Config{
+			Path: *path,
+			Host: []string{*host},
 		}
 		if *mux != 0 {
 			connectionReuse = true
