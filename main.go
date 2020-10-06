@@ -383,19 +383,22 @@ func main() {
 
 	printCoreVersion()
 
-	server, err := startV2Ray()
+	v2Ray, err := startV2Ray()
 	if err != nil {
 		logFatal(err.Error())
 		// Configuration error. Exit with a special value to prevent systemd from restarting.
 		os.Exit(23)
 	}
-	if err := server.Start(); err != nil {
+	if err := v2Ray.Start(); err != nil {
 		logFatal("failed to start server:", err.Error())
 		os.Exit(1)
 	}
+	if *server {
+		newError("Serving in " + *mode + " mode at " + *localAddr + ":" + *localPort).AtWarning().WriteToLog()
+	}
 
 	defer func() {
-		err := server.Close()
+		err := v2Ray.Close()
 		if err != nil {
 			logWarn(err.Error())
 		}
