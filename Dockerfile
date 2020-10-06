@@ -1,5 +1,5 @@
 # build
-FROM golang:alpine AS builder
+FROM golang:1.15 AS builder
 ARG SRCDIR=/usr/src/v2ray-plugin
 ARG GOPATH=/go
 ARG GOPROXY
