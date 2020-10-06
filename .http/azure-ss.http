@@ -1,0 +1,15 @@
+GET http://flikas-ss.azurewebsites.net/socket.io/1/websocket/11757778832812938 HTTP/1.1
+Host: flikas-ss.azurewebsites.net
+Origin: http://flikas-ss.azurewebsites.net
+Sec-WebSocket-Key: rncnx5pFjLGDxytcDkRgZg==
+Connection: Upgrade
+Upgrade: websocket
+Sec-WebSocket-Version: 13
+
+###
+GET https://abc123.azurewebsites.net/socket.io/1/websocket/11757107011524818642 HTTP/1.1
+Origin: https://abc123.azurewebsites.net
+Sec-WebSocket-Key: rncnx5pFjLGDxytcDkRgZg==
+Connection: Upgrade
+Upgrade: Websocket
+Sec-WebSocket-Version: 13

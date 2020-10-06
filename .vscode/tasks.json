@@ -16,7 +16,7 @@
             }
         },
         {
-            "label": "heroku build",
+            "label": "heroku build - us",
             "type": "shell",
             "command": "heroku",
             "args": [
@@ -30,7 +30,7 @@
             "group": "build"
         },
         {
-            "label": "heroku",
+            "label": "heroku - us",
             "type": "shell",
             "command": "heroku",
             "args": [
@@ -40,9 +40,51 @@
                 "flikas-ss-us"
             ],
             "dependsOn": [
-                "heroku build"
+                "heroku build - us"
             ],
             "group": "build",
+            "problemMatcher": [
+                "$go"
+            ]
+        },
+        {
+            "label": "heroku build - eu",
+            "type": "shell",
+            "command": "heroku",
+            "args": [
+                "container:push",
+                "web",
+                "--arg",
+                "GOPROXY=https://mirrors.aliyun.com/goproxy/",
+                "-a",
+                "flikas-ss-eu"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "heroku - eu",
+            "type": "shell",
+            "command": "heroku",
+            "args": [
+                "container:release",
+                "web",
+                "-a",
+                "flikas-ss-eu"
+            ],
+            "dependsOn": [
+                "heroku build - eu"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$go"
+            ]
+        },
+        {
+            "label": "heroku",
+            "dependsOn": [
+                "heroku - eu",
+                "heroku - us"
+            ],
             "problemMatcher": [
                 "$go"
             ]
