@@ -28,9 +28,9 @@ import (
 
 	"v2ray.com/core/proxy/dokodemo"
 	"v2ray.com/core/proxy/freedom"
+	"v2ray.com/core/proxy/http"
 
 	"v2ray.com/core/transport/internet"
-	"v2ray.com/core/transport/internet/http"
 	"v2ray.com/core/transport/internet/quic"
 	"v2ray.com/core/transport/internet/tls"
 	"v2ray.com/core/transport/internet/websocket"
@@ -130,42 +130,39 @@ func generateConfig() (*core.Config, error) {
 		},
 	})
 
-	var transportSettings proto.Message
 	var connectionReuse bool
-	switch *mode {
-	case "websocket":
-		transportSettings = &websocket.Config{
-			Path: *path,
-			Header: []*websocket.Header{
-				{Key: "Host", Value: *host},
-			},
+	var streamConfig internet.StreamConfig
+	if *mode == "http" {
+		streamConfig = internet.StreamConfig{}
+	} else {
+		var transportSettings proto.Message
+		switch *mode {
+		case "websocket":
+			transportSettings = &websocket.Config{
+				Path: *path,
+				Header: []*websocket.Header{
+					{Key: "Host", Value: *host},
+				},
+			}
+			if *mux != 0 {
+				connectionReuse = true
+			}
+		case "quic":
+			transportSettings = &quic.Config{
+				Security: &protocol.SecurityConfig{Type: protocol.SecurityType_NONE},
+			}
+			*tlsEnabled = true
+		default:
+			return nil, newError("unsupported mode:", *mode)
 		}
-		if *mux != 0 {
-			connectionReuse = true
-		}
-	case "http":
-		transportSettings = &http.Config{
-			Path: *path,
-			Host: []string{*host},
-		}
-		if *mux != 0 {
-			connectionReuse = true
-		}
-	case "quic":
-		transportSettings = &quic.Config{
-			Security: &protocol.SecurityConfig{Type: protocol.SecurityType_NONE},
-		}
-		*tlsEnabled = true
-	default:
-		return nil, newError("unsupported mode:", *mode)
-	}
 
-	streamConfig := internet.StreamConfig{
-		ProtocolName: *mode,
-		TransportSettings: []*internet.TransportConfig{{
+		streamConfig = internet.StreamConfig{
 			ProtocolName: *mode,
-			Settings:     serial.ToTypedMessage(transportSettings),
-		}},
+			TransportSettings: []*internet.TransportConfig{{
+				ProtocolName: *mode,
+				Settings:     serial.ToTypedMessage(transportSettings),
+			}},
+		}
 	}
 	if *fastOpen {
 		streamConfig.SocketSettings = &internet.SocketConfig{Tfo: internet.SocketConfig_Enable}
@@ -217,6 +214,15 @@ func generateConfig() (*core.Config, error) {
 			// dokodemo is not aware of mux connections by itself.
 			proxyAddress = net.ParseAddress("v1.mux.cool")
 		}
+		var inboundProxy *serial.TypedMessage
+		if *mode == "http" {
+			inboundProxy = serial.ToTypedMessage(&http.ServerConfig{})
+		} else {
+			inboundProxy = serial.ToTypedMessage(&dokodemo.Config{
+				Address:  net.NewIPOrDomain(proxyAddress),
+				Networks: []net.Network{net.Network_TCP},
+			})
+		}
 		localAddrs := parseLocalAddr(*localAddr)
 		inbounds := make([]*core.InboundHandlerConfig, len(localAddrs))
 
@@ -227,10 +233,7 @@ func generateConfig() (*core.Config, error) {
 					Listen:         net.NewIPOrDomain(net.ParseAddress(localAddrs[i])),
 					StreamSettings: &streamConfig,
 				}),
-				ProxySettings: serial.ToTypedMessage(&dokodemo.Config{
-					Address:  net.NewIPOrDomain(proxyAddress),
-					Networks: []net.Network{net.Network_TCP},
-				}),
+				ProxySettings: inboundProxy,
 			}
 		}
 
@@ -245,6 +248,14 @@ func generateConfig() (*core.Config, error) {
 		senderConfig := proxyman.SenderConfig{StreamSettings: &streamConfig}
 		if connectionReuse {
 			senderConfig.MultiplexSettings = &proxyman.MultiplexingConfig{Enabled: true, Concurrency: uint32(*mux)}
+		}
+		if *mode == "http" {
+			outboundProxy = serial.ToTypedMessage(&http.ClientConfig{
+				Server: []*protocol.ServerEndpoint{{
+					Address: net.NewIPOrDomain(net.ParseAddress(*remoteAddr)),
+					Port:    uint32(rport),
+				}},
+			})
 		}
 		return &core.Config{
 			Inbound: []*core.InboundHandlerConfig{{
@@ -395,6 +406,8 @@ func main() {
 	}
 	if *server {
 		newError("Serving in " + *mode + " mode at " + *localAddr + ":" + *localPort).AtWarning().WriteToLog()
+	} else {
+		newError("Using mode " + *mode + " to server " + *remoteAddr + ":" + *remotePort).AtWarning().WriteToLog()
 	}
 
 	defer func() {
