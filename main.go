@@ -395,6 +395,8 @@ func main() {
 	}
 	if *server {
 		newError("Serving in " + *mode + " mode at " + *localAddr + ":" + *localPort).AtWarning().WriteToLog()
+	} else {
+		newError("Using mode " + *mode + " to server " + *remoteAddr + ":" + *remotePort).AtWarning().WriteToLog()
 	}
 
 	defer func() {
