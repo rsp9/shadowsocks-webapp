@@ -13,10 +13,3 @@ Sec-WebSocket-Key: rncnx5pFjLGDxytcDkRgZg==
 Connection: Upgrade
 Upgrade: Websocket
 Sec-WebSocket-Version: 13
-
-###
-GET http://flikas-chat.azurewebsites.net/
-
-###
-GET http://localhost:1984/
-Host: flikas-chat.azurewebsites.net
