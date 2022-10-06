@@ -1,15 +1,9 @@
 ## Yet another SIP003 plugin for shadowsocks, based on [v2ray](https://github.com/v2fly/v2ray-core)
 
-[![CircleCI](https://circleci.com/gh/shadowsocks/v2ray-plugin.svg?style=shield)](https://circleci.com/gh/shadowsocks/v2ray-plugin)
-[![Releases](https://img.shields.io/github/downloads/shadowsocks/v2ray-plugin/total.svg)](https://github.com/shadowsocks/v2ray-plugin/releases)
-[![Language: Go](https://img.shields.io/badge/go-1.13+-blue.svg)](https://github.com/shadowsocks/v2ray-plugin/search?l=go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/shadowsocks/v2ray-plugin)](https://goreportcard.com/report/github.com/shadowsocks/v2ray-plugin)
-[![License](https://img.shields.io/github/license/shadowsocks/v2ray-plugin.svg)](LICENSE)
-
 ## Build
 
 * `go build`
-* Alternatively, you can grab the latest nightly from Circle CI by logging into Circle CI or adding `#artifacts` at the end of URL like such: https://circleci.com/gh/shadowsocks/v2ray-plugin/20#artifacts
+* Alternatively, `docker build`
 
 ## Usage
 
@@ -75,3 +69,17 @@ Alternatively, you can specify path to your certificates using option `cert` and
 ### Use `certRaw` to pass certificate
 
 Instead of using `cert` to pass the certificate file, `certRaw` could be used to pass in PEM format certificate, that is the content between `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` without the line breaks.
+
+## Deploy to AWS EC2/Lightsail (using docker)
+1. Create an AWS EC2/Lightsail server, connect and open a cmd shell.
+2. `sudo yum -y install docker`
+3. `sudo systemctl enable docker`
+4. `sudo systemctl start docker`
+5. `sudo docker run -e PASSWORD=<YOUR_PASSWORD> -e METHOD=chacha20-ietf-poly1305 -p 80:443 -d --restart always --name ss flikas/shadowsocks-webapp`
+6. Check: `docker ps`, `docker logs ss`
+7. Setup client: 
+    - Server Address: `Your server public ip`
+    - Server Port: `80`
+    - Encryption: `chacha20-ietf-poly1305`
+    - Plugin: `v2ray-plugin.exe`
+    - Plugin Args: `path=/api`
