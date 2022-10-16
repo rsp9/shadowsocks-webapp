@@ -1,4 +1,4 @@
-module github.com/shadowsocks/v2ray-plugin
+module github.com/flikas/shadowsocks-webapp
 
 go 1.16
 
