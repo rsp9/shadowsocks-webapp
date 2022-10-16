@@ -71,15 +71,26 @@ Alternatively, you can specify path to your certificates using option `cert` and
 Instead of using `cert` to pass the certificate file, `certRaw` could be used to pass in PEM format certificate, that is the content between `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` without the line breaks.
 
 ## Deploy to AWS EC2/Lightsail (using docker)
+
 1. Create an AWS EC2/Lightsail server, connect and open a cmd shell.
 2. `sudo yum -y install docker`
 3. `sudo systemctl enable docker`
 4. `sudo systemctl start docker`
 5. `sudo docker run -e PASSWORD=<YOUR_PASSWORD> -e METHOD=chacha20-ietf-poly1305 -p 80:443 -d --restart always --name ss flikas/shadowsocks-webapp`
 6. Check: `docker ps`, `docker logs ss`
-7. Setup client: 
+7. Setup client:
     - Server Address: `Your server public ip`
     - Server Port: `80`
     - Encryption: `chacha20-ietf-poly1305`
-    - Plugin: `v2ray-plugin.exe`
+    - Plugin: `<plugin binary file>`
     - Plugin Args: `path=/api`
+
+### Enable TLS(Using bundled self-signed certificate)
+
+- Server:
+    1. Add environment variable `V2RAY_ARGS=tls` to the docker container, and change port binding to 443:443, the whole command would be:
+    ```
+    sudo docker run -e PASSWORD=<YOUR_PASSWORD> -e METHOD=chacha20-ietf-poly1305 -e V2RAY_ARGS=tls -p 443:443 -d --restart always --name ss flikas/shadowsocks-webapp
+    ```
+- Client:
+    1. Plugin args: `path=/api;tls;tlsInsecure`
